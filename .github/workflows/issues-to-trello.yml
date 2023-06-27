@@ -1,0 +1,54 @@
+name: Sample github action
+
+on:
+  workflow_call:
+    inputs:
+      trello_list_index:
+        required: true
+        type: number
+        description: Index number of the list that should receive the Trello cards (1st list from the left = 1, 2nd list = 2, etc)
+    secrets:
+      trello_board_id:
+        required: true
+        description: ID of the Trello board
+      trello_api_key:
+        required: true
+        description: API key for the Trello board
+      trello_api_secret:
+        required: true
+        description: API secret for the Trello board
+      trello_token:
+        required: true
+        description: Token for the Trello board
+      trello_token_secret:
+        required: true
+        description: Token secret for the Trello board
+
+jobs:
+  create_cards:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+  
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
+  
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install py-trello
+  
+      - name: Create Trello cards from Github issues
+        env:
+          TRELLO_LIST_INDEX: ${{ inputs.trello_list_index }}
+          TRELLO_BOARD_ID: ${{ secrets.trello_board_id }}
+          TRELLO_API_KEY: ${{ secrets.trello_api_key }}
+          TRELLO_API_SECRET: ${{ secrets.trello_api_secret }}
+          TRELLO_TOKEN: ${{ secrets.trello_token }}
+          TRELLO_TOKEN_SECRET: ${{ secrets.trello_token_secret }}
+
+        run: python .github/scripts/create_cards.py
