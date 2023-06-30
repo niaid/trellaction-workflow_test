@@ -2,6 +2,7 @@ import os
 import requests
 import json
 from github import Github
+import pprint
 
 token = os.getenv("REPO_TOKEN")
 g = Github(token)
@@ -70,10 +71,13 @@ print(f"Skipped issue IDs: {skipped_issues}")
 # Get CodeQL alerts
 
 codescan_alerts = repo.get_codescan_alerts()
+pp = pprint.PrettyPrinter(indent=2)
 
 print(codescan_alerts)
 
 for alert in codescan_alerts:
+
+  pp.pprint(vars(alert))
   alert_id = alert.number
   created_at = alert.created_at
   dismissed_at = alert.dismissed_at
