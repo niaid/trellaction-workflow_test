@@ -10,6 +10,7 @@ headers = {"Authorization": f"Bearer {token}"}
 owner, repo_name = os.getenv("GITHUB_REPOSITORY").split("/")
 repo = g.get_repo(f"{owner}/{repo_name}")
 
+# Get Dependabot alerts
 
 query = f"""
 {{
@@ -59,6 +60,57 @@ for alert in alerts:
     repo.create_issue(
       title=issue_title,
       body=description,
+      labels=["security"]
+    )
+    created_issues.append(alert_id)
+
+print(f"Created issue IDs: {created_issues}")
+print(f"Skipped issue IDs: {skipped_issues}")
+
+# Get CodeQL alerts
+
+codescan_alerts = repo.get_codescan_alerts()
+
+for alert in codescan_alerts:
+  alert_id = alert.number
+  created_at = alert.created_at
+  dismissed_at = alert.dismissed_at
+  tool_name = alert.tool.name
+  tool_version = alert.tool.version
+  tool_guid = alert.tool.guid
+  rule_name = alert.rule.name
+  rule_severity_level = alert.rule.security_severity_level
+  rule_severity = alert.rule.severity
+  rule_description = alert.rule.description
+  recent_instance_ref = alert.most_recent_instance.ref
+  recent_instance_state = alert.most_recent_instance.state
+  location = alert.most_recent_instance.location
+  message_text = alert.most_recent_instance.message['text']
+
+  # Construct the issue title and body
+  issue_title = f"CodeQL Alert #{alert_id} - Security rule {rule_name} triggered"
+  issue_body = f"""
+  **Tool**: {tool_name} ({tool_version})
+  **Rule**: {rule_name}
+  **Severity**: {rule_severity} (Security level: {rule_severity_level})
+  **Description**: {rule_description}
+  **Instance reference**: {recent_instance_ref}
+  **Instance state**: {recent_instance_state}
+  **Location**: {json.dumps(location)}
+  **Message**: {message_text}
+  """
+
+  # Check if the issue already exists
+  issue_exists = any(issue.title == issue_title for issue in repo.get_issues(state="open"))
+
+  # If the issue already exists or the alert has been dismissed, skip it
+  if issue_exists or dismissed_at is not None:
+    skipped_issues.append(alert_id)
+  else:
+    # Create a new issue
+    repo.create_issue(
+      title=issue_title,
+      body=issue_body,
       labels=["security"]
     )
     created_issues.append(alert_id)
