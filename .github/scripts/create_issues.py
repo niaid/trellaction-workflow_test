@@ -71,6 +71,8 @@ print(f"Skipped issue IDs: {skipped_issues}")
 
 codescan_alerts = repo.get_codescan_alerts()
 
+print(codescan_alerts)
+
 for alert in codescan_alerts:
   alert_id = alert.number
   created_at = alert.created_at
