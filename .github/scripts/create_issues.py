@@ -86,7 +86,6 @@ for alert in codescan_alerts:
   rule_description = alert.rule.description
   recent_instance_ref = alert.most_recent_instance.ref
   recent_instance_state = alert.most_recent_instance.state
-  location = alert.most_recent_instance.location
   message_text = alert.most_recent_instance.message['text']
 
   # Construct the issue title and body
@@ -98,7 +97,6 @@ for alert in codescan_alerts:
   **Description**: {rule_description}
   **Instance reference**: {recent_instance_ref}
   **Instance state**: {recent_instance_state}
-  **Location**: {json.dumps(location)}
   **Message**: {message_text}
   """
 
