@@ -15,8 +15,9 @@ repo = g.get_repo(f"{owner}/{repo_name}")
 query = f"""
 {{
   repository(owner:"{owner}", name:"{repo_name}") {{
-    vulnerabilityAlerts(first: 100) {{
+    vulnerabilityAlerts(first: 100, states:OPEN) {{
       nodes {{
+        severity
         number
         state
         createdAt
@@ -45,6 +46,7 @@ dep_skipped_issues = []
 for alert in alerts:
   alert_id = alert["number"]
   state = alert["state"]
+  severity = alert["severity"].title()  
   package_name = alert["securityVulnerability"]["package"]["name"]
   description = alert["securityVulnerability"]["advisory"]["description"]
   
@@ -61,7 +63,7 @@ for alert in alerts:
     repo.create_issue(
       title=issue_title,
       body=f"{description}\n\n[Dependabot Alert Link]({alert_url})",
-      labels=["security"]
+      labels=["security", "dependabot", severity]
     )
     dep_created_issues.append(alert_id)
 
@@ -116,7 +118,7 @@ for alert in codescan_alerts:
     repo.create_issue(
       title=issue_title,
       body=f"{issue_body}\n\n[CodeQL Alert Link]({alert_url})",
-      labels=["security"]
+      labels=["security", "code scanning", rule_severity_level]
     )
     scan_created_issues.append(alert_id)
 
