@@ -23,6 +23,9 @@ on:
       trello_token_secret:
         required: true
         description: Token secret for the Trello board
+      repo_token:
+        required: true
+        description: Github token allowing access to the libraries and ghcr.
 
 jobs:
   create_cards:
