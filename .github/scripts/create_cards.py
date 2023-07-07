@@ -10,7 +10,7 @@ client = TrelloClient(
     token_secret=os.getenv("TRELLO_TOKEN_SECRET")
 )
 
-github_client = Github(os.getenv('GITHUB_TOKEN'))
+github_client = Github(os.getenv('REPO_TOKEN'))
 
 board_id = os.getenv('TRELLO_BOARD_ID')
 list_index = int(os.getenv('TRELLO_LIST_INDEX')) - 1
