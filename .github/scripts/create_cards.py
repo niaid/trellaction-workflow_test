@@ -31,6 +31,17 @@ if "security" in [label["name"] for label in issue_data["labels"]]:
     existing_cards = board.all_cards()
     archived_cards = board.closed_cards()
 
+    # Get all labels in the board
+    existing_labels = board.get_labels(limit=None)
+
+    # Prepare labels for the card
+    card_labels = []
+    for issue_label in issue_data["labels"]:
+        for trello_label in existing_labels:
+            # Check if a label with the same name exists in Trello
+            if trello_label.name == issue_label["name"]:
+                card_labels.append(trello_label)
+
     issue_link = issue_data["html_url"]
     desc = f'{issue_data["body"]}\n\n[Link to GitHub Issue]({issue_link})'
 
