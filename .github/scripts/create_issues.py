@@ -17,7 +17,6 @@ query = f"""
   repository(owner:"{owner}", name:"{repo_name}") {{
     vulnerabilityAlerts(first: 100) {{
       nodes {{
-        severity
         number
         state
         createdAt
@@ -29,6 +28,7 @@ query = f"""
           advisory {{
             description
           }}
+          severity
         }}
       }}
     }}
