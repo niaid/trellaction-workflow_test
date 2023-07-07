@@ -15,7 +15,7 @@ repo = g.get_repo(f"{owner}/{repo_name}")
 query = f"""
 {{
   repository(owner:"{owner}", name:"{repo_name}") {{
-    vulnerabilityAlerts(first: 100, states:OPEN) {{
+    vulnerabilityAlerts(first: 100) {{
       nodes {{
         severity
         number
