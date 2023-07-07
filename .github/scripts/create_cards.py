@@ -55,7 +55,8 @@ if "security" in [label["name"] for label in issue_data["labels"]]:
         trello_card_link = card.url
 
     # Add a comment to the GitHub issue with a link to the Trello card
-    repo = github_client.get_repo(issue_data["repository"]["full_name"])
+    repo_full_name = issue_data["repository_url"].split("https://api.github.com/repos/")[1]
+    repo = github_client.get_repo(repo_full_name)
     issue = repo.get_issue(number=issue_data["number"])
     comments = issue.get_comments()
 
