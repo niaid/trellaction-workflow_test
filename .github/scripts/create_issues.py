@@ -46,7 +46,7 @@ dep_skipped_issues = []
 for alert in alerts:
   alert_id = alert["number"]
   state = alert["state"]
-  severity = alert["severity"].title()  
+  severity = alert["securityVulnerability"]["severity"]  
   package_name = alert["securityVulnerability"]["package"]["name"]
   description = alert["securityVulnerability"]["advisory"]["description"]
   
