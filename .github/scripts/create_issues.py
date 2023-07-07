@@ -39,8 +39,8 @@ response = requests.post('https://api.github.com/graphql', headers=headers, json
 data = response.json()
 
 alerts = data["data"]["repository"]["vulnerabilityAlerts"]["nodes"]
-created_issues = []
-skipped_issues = []
+dep_created_issues = []
+dep_skipped_issues = []
 
 for alert in alerts:
   alert_id = alert["number"]
@@ -54,24 +54,26 @@ for alert in alerts:
   # Check if an issue already exists
   issue_exists = any(issue.title == issue_title for issue in repo.get_issues(state="open"))
   if issue_exists or state != 'OPEN':
-    skipped_issues.append(alert_id)
+    dep_skipped_issues.append(alert_id)
   else:
     # Create a new issue
+    alert_url = f"https://github.com/{owner}/{repo_name}/security/dependabot/{alert_id}"
     repo.create_issue(
       title=issue_title,
-      body=description,
+      body=f"{description}\n\n[Dependabot Alert Link]({alert_url})",
       labels=["security"]
     )
-    created_issues.append(alert_id)
+    dep_created_issues.append(alert_id)
 
-print(f"Created issue IDs: {created_issues}")
-print(f"Skipped issue IDs: {skipped_issues}")
+print(f"Created issue IDs: {dep_created_issues}")
+print(f"Skipped issue IDs: {dep_skipped_issues}")
 
 # Get CodeQL alerts
 
 codescan_alerts = repo.get_codescan_alerts()
 
-print(codescan_alerts)
+scan_created_issues = []
+scan_skipped_issues = []
 
 for alert in codescan_alerts:
   alert_id = alert.number
@@ -107,15 +109,16 @@ for alert in codescan_alerts:
 
   # If the issue already exists or the alert has been dismissed, skip it
   if issue_exists or dismissed_at is not None:
-    skipped_issues.append(alert_id)
+    scan_skipped_issues.append(alert_id)
   else:
     # Create a new issue
+    alert_url = f"https://github.com/{owner}/{repo_name}/security/code-scanning/{alert_id}"
     repo.create_issue(
       title=issue_title,
-      body=issue_body,
+      body=f"{issue_body}\n\n[CodeQL Alert Link]({alert_url})",
       labels=["security"]
     )
-    created_issues.append(alert_id)
+    scan_created_issues.append(alert_id)
 
-print(f"Created issue IDs: {created_issues}")
-print(f"Skipped issue IDs: {skipped_issues}")
+print(f"Created issue IDs: {scan_created_issues}")
+print(f"Skipped issue IDs: {scan_skipped_issues}")
