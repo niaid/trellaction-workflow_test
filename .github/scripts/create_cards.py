@@ -34,9 +34,12 @@ if "security" in [label["name"] for label in issue_data["labels"]]:
     issue_link = issue_data["html_url"]
     desc = f'{issue_data["body"]}\n\n[Link to GitHub Issue]({issue_link})'
 
+    # Including the repo name in the card's title
+    card_title = f'{event["repository"]["full_name"]}: {issue_data["title"]}'
+
     # Check if a card with the same title exists
     for card in existing_cards:
-        if card.name == issue_data["title"]:
+        if card.name == card_title:
             # If the card is closed (archived), do nothing
             if card in archived_cards:
                 print("Card already closed.")
@@ -51,7 +54,7 @@ if "security" in [label["name"] for label in issue_data["labels"]]:
         print("No card exists for this issue.  Creating new card...")
         # If no existing card is found, add a new card
         list = board.list_lists()[list_index]  # Put the card in the specified list
-        card = list.add_card(issue_data["title"], desc=desc)
+        card = list.add_card(card_title, desc=desc)
         trello_card_link = card.url
 
     # Add a comment to the GitHub issue with a link to the Trello card
