@@ -46,7 +46,7 @@ dep_skipped_issues = []
 for alert in alerts:
   alert_id = alert["number"]
   state = alert["state"]
-  severity = alert["securityVulnerability"]["severity"]  
+  severity = str(alert["securityVulnerability"]["severity"]).title
   package_name = alert["securityVulnerability"]["package"]["name"]
   description = alert["securityVulnerability"]["advisory"]["description"]
   
@@ -63,7 +63,7 @@ for alert in alerts:
     repo.create_issue(
       title=issue_title,
       body=f"{description}\n\n[Dependabot Alert Link]({alert_url})",
-      labels=["security", "dependabot", f"priority: {severity}"]
+      labels=["security", "dependabot", f"Priority: {severity}"]
     )
     dep_created_issues.append(alert_id)
 
@@ -118,7 +118,7 @@ for alert in codescan_alerts:
     repo.create_issue(
       title=issue_title,
       body=f"{issue_body}\n\n[CodeQL Alert Link]({alert_url})",
-      labels=["security", "code scanning", f"priority: {rule_severity_level}"]
+      labels=["security", "code scanning", f"Priority: {str(rule_severity_level).title}"]
     )
     scan_created_issues.append(alert_id)
 
