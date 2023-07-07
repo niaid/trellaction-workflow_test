@@ -63,7 +63,7 @@ for alert in alerts:
     repo.create_issue(
       title=issue_title,
       body=f"{description}\n\n[Dependabot Alert Link]({alert_url})",
-      labels=["security", "dependabot", severity]
+      labels=["security", "dependabot", f"priority: {severity}"]
     )
     dep_created_issues.append(alert_id)
 
@@ -118,7 +118,7 @@ for alert in codescan_alerts:
     repo.create_issue(
       title=issue_title,
       body=f"{issue_body}\n\n[CodeQL Alert Link]({alert_url})",
-      labels=["security", "code scanning", rule_severity_level]
+      labels=["security", "code scanning", f"priority: {rule_severity_level}"]
     )
     scan_created_issues.append(alert_id)
 
