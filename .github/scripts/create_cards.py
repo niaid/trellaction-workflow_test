@@ -33,30 +33,22 @@ if "security" in [label["name"] for label in issue_data["labels"]]:
     issue_link = issue_data["html_url"]
     desc = f'{issue_data["body"]}\n\n[Link to GitHub Issue]({issue_link})'
 
-    # # Check if card already exists
-    # if not any(card.name == issue["title"] for card in existing_cards):
-    #     # Add the issue link to the description
-    #     issue_link = issue["html_url"]
-    #     desc = f'{issue["body"]}\n\n[Link to GitHub Issue]({issue_link})'
-
-    #     # Create the new card with the updated description
-    #     card = list.add_card(issue["title"], desc=desc)
-    # else:
-    #     card.set_description(desc)
-
     # Check if a card with the same title exists
     for card in existing_cards:
         if card.name == issue_data["title"]:
             # If the card is closed (archived), do nothing
             if card.closed:
+                print("Card already closed.")
                 break
 
+            print("Card already open. Updating description...")
             # Update the existing card
             card.set_description(desc)
             # Update the GitHub issue with a link to the Trello card
             issue.edit(body=f'{issue_data["body"]}\n\n[Trello Card]({card.url})')
             break
     else:
+        print("No card exists for this issue.  Creating new card...")
         # If no existing card is found, add a new card
         list = board.list_lists()[list_index]  # Put the card in the specified list
         card = list.add_card(issue_data["title"], desc=desc)

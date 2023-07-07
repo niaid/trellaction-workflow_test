@@ -43,6 +43,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install py-trello
+          pip install PyGithub
   
       - name: Create Trello cards from Github issues
         env:
@@ -52,5 +53,5 @@ jobs:
           TRELLO_API_SECRET: ${{ secrets.trello_api_secret }}
           TRELLO_TOKEN: ${{ secrets.trello_token }}
           TRELLO_TOKEN_SECRET: ${{ secrets.trello_token_secret }}
-
+          REPO_TOKEN: ${{ secrets.repo_token }}
         run: python .github/scripts/create_cards.py
