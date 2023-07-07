@@ -10,7 +10,7 @@ client = TrelloClient(
 )
 
 board_id = os.getenv('TRELLO_BOARD_ID')
-list_index = os.getenv('TRELLO_LIST_INDEX') - 1
+list_index = int(os.getenv('TRELLO_LIST_INDEX')) - 1
 github_event = os.getenv('GITHUB_EVENT_PATH')
 with open(github_event, "r") as event_file:
     event = json.load(event_file)
