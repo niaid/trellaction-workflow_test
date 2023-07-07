@@ -23,8 +23,31 @@ if "security" in [label["name"] for label in issue["labels"]]:
     # Get all cards in the board, including those in the archive
     existing_cards = board.all_cards()
 
-    # Check if card already exists
-    if not any(card.name == issue["title"] for card in existing_cards):
-        card = in_list.add_card(issue["title"], desc=issue["body"])
+    issue_link = issue["html_url"]
+    desc = f'{issue["body"]}\n\n[Link to GitHub Issue]({issue_link})'
+
+    # # Check if card already exists
+    # if not any(card.name == issue["title"] for card in existing_cards):
+    #     # Add the issue link to the description
+    #     issue_link = issue["html_url"]
+    #     desc = f'{issue["body"]}\n\n[Link to GitHub Issue]({issue_link})'
+
+    #     # Create the new card with the updated description
+    #     card = list.add_card(issue["title"], desc=desc)
+    # else:
+    #     card.set_description(desc)
+
+    # Check if a card with the same title exists
+    for card in existing_cards:
+        if card.name == issue["title"]:
+            # If the card is closed (archived), do nothing
+            if card.closed:
+                break
+
+            # Update the existing card
+            card.set_description(desc)
+            break
     else:
-        print("Card with title '{}' already exists.".format(issue["title"]))
+        # If no existing card is found, add a new card
+        list = board.list_lists()[list_index]  # Put the card in the specified list
+        card = list.add_card(issue["title"], desc=desc)
