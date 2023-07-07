@@ -59,6 +59,9 @@ if "security" in [label["name"] for label in issue_data["labels"]]:
             print("Card already open. Updating description...")
             # Update the existing card
             card.set_description(desc)
+            # Add labels to the card
+            for label in card_labels:
+                card.add_label(label)
             trello_card_link = card.url
             break
     else:
@@ -66,6 +69,9 @@ if "security" in [label["name"] for label in issue_data["labels"]]:
         # If no existing card is found, add a new card
         list = board.list_lists()[list_index]  # Put the card in the specified list
         card = list.add_card(card_title, desc=desc)
+        # Add labels to the card
+        for label in card_labels:
+            card.add_label(label)
         trello_card_link = card.url
 
     # Add a comment to the GitHub issue with a link to the Trello card
