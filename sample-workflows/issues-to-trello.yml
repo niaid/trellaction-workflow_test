@@ -1,0 +1,18 @@
+name: Github Issues to Trello
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  issues-to-trello:
+    uses: niaid/trellaction-workflow/.github/workflows/issues-to-trello.yaml@main
+    with: 
+      trello_list_index: 1
+    secrets:
+      trello_board_id: ${{ secrets.TRELLO_BOARD_ID }}
+      trello_api_key: ${{ secrets.TRELLO_API_KEY }}
+      trello_api_secret: ${{ secrets.TRELLO_API_SECRET }}
+      trello_token: ${{ secrets.TRELLO_TOKEN }}
+      trello_token_secret: ${{ secrets.TRELLO_TOKEN_SECRET }}
+      repo_token: ${{ secrets.REPO_TOKEN }}
