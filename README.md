@@ -64,11 +64,12 @@ Copy both the workflows scripts from https://github.com/niaid/trellaction-workfl
 2. Click "Secrets and varibles" on the menu on the left 
 3. Click "Actions" from the resulting dropdown options
 4. Click "New repository secret" for each of the values from this table:
-| Secret Name | Description | 
-| --- | --- |
-| REPO_TOKEN | Your Github personal access token |
-| TRELLO_API_KEY | Your API key for your Trello integration |
-| TRELLO_API_SECRET | Your API secret for your Trello integration |
-| TRELLO_BOARD_ID | Your trello board ID |
-| TRELLO_TOKEN | Your oauth token for your Trello integration | 
+   
+| Secret Name         | Description                                         | 
+|---------------------|-----------------------------------------------------|
+| REPO_TOKEN          | Your Github personal access token                   |
+| TRELLO_API_KEY      | Your API key for your Trello integration            |
+| TRELLO_API_SECRET   | Your API secret for your Trello integration         |
+| TRELLO_BOARD_ID     | Your trello board ID                                |
+| TRELLO_TOKEN        | Your oauth token for your Trello integration        | 
 | TRELLO_TOKEN_SECRET | Your oauth token secret for your Trello integration |
