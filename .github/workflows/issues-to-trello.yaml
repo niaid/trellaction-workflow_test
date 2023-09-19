@@ -3,10 +3,15 @@ name: Sample github action
 on:
   workflow_call:
     inputs:
-      trello_list_index:
+      trello_list_name:
         required: true
-        type: number
-        description: Index number of the list that should receive the Trello cards (1st list from the left = 1, 2nd list = 2, etc)
+        type: string
+        description: Name of the list that should receive the Trello cards
+      branch_name:
+        required: false  
+        type: string
+        description: Name of the branch to checkout
+        default: 'main'  # Default to main unless some other branch is needed
     secrets:
       trello_board_id:
         required: true
@@ -36,6 +41,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: niaid/trellaction-workflow
+          ref: ${{ inputs.branch_name }}
   
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -58,7 +64,7 @@ jobs:
   
       - name: Create Trello cards from Github issues
         env:
-          TRELLO_LIST_INDEX: ${{ inputs.trello_list_index }}
+          TRELLO_LIST_NAME: ${{ inputs.trello_list_name }}
           TRELLO_BOARD_ID: ${{ secrets.trello_board_id }}
           TRELLO_API_KEY: ${{ secrets.trello_api_key }}
           TRELLO_API_SECRET: ${{ secrets.trello_api_secret }}

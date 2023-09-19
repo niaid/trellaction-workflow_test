@@ -2,6 +2,20 @@ name: Sample github action
 
 on:
   workflow_call:
+    inputs:
+      branch_name:
+        required: false  
+        type: string
+        description: Name of the branch to checkout
+        default: 'main'  # Default to main unless some other branch is needed
+      custom_labels:
+        required: false
+        type: string
+        description: Comma separated lists of labels to be added to issues which is then passed onto Trello cards
+      priority_prefix:
+        required: false
+        type: string
+        description: Prefix to be added to priority labels, e.g. "Priority:".  Be sure to include any required punctuation.
     secrets:
       repo_token:
         required: true
@@ -16,6 +30,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: niaid/trellaction-workflow
+          ref: ${{ inputs.branch_name }}
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -38,4 +53,6 @@ jobs:
       - name: Create Github issues from Dependabot alerts
         env:
           REPO_TOKEN: ${{ secrets.repo_token }}
+          CUSTOM_LABELS: ${{ inputs.custom_labels }}
+          PRIORITY_PREFIX: ${{ inputs.priority_prefix }}
         run: python .github/scripts/create_issues.py

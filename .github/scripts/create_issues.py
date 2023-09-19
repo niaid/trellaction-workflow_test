@@ -40,16 +40,38 @@ response = requests.post('https://api.github.com/graphql', headers=headers, json
 data = response.json()
 
 alerts = data["data"]["repository"]["vulnerabilityAlerts"]["nodes"]
+
+custom_labels_env = os.getenv("CUSTOM_LABELS", "")
+custom_labels = [label.strip() for label in os.getenv("CUSTOM_LABELS", "").split(",")] + ["Trellaction"]
+print(custom_labels_env)
+print(custom_labels)
+severity_prefix = os.getenv("PRIORITY_PREFIX", "").strip()
+
 dep_created_issues = []
 dep_skipped_issues = []
+
+# Define the mapping dictionary
+severity_mapping = {
+    "moderate": "medium",
+    "critical": "high"
+}
+
+# Define the function to convert severity
+def convert_severity(severity):
+    return severity_mapping.get(severity.lower(), severity)
 
 for alert in alerts:
   alert_id = alert["number"]
   state = alert["state"]
-  severity = str(alert["securityVulnerability"]["severity"]).title()
+  severity = convert_severity(str(alert["securityVulnerability"]["severity"])).title()
   package_name = alert["securityVulnerability"]["package"]["name"]
   description = alert["securityVulnerability"]["advisory"]["description"]
-  
+
+  if severity_prefix:
+    severity_label = f"{severity_prefix} {severity}"
+  else: 
+    severity_label = severity
+
   # Create a title for the issue
   issue_title = f"Dependabot Alert #{alert_id} - {package_name} is vulnerable"
 
@@ -60,10 +82,11 @@ for alert in alerts:
   else:
     # Create a new issue
     alert_url = f"https://github.com/{owner}/{repo_name}/security/dependabot/{alert_id}"
+    print(f"Severity: {severity_label} Labels: {custom_labels}")
     repo.create_issue(
       title=issue_title,
       body=f"{description}\n\n[Dependabot Alert Link]({alert_url})",
-      labels=["security", "dependabot", f"Priority: {severity}"]
+      labels=[severity_label] + custom_labels
     )
     dep_created_issues.append(alert_id)
 
@@ -92,6 +115,12 @@ for alert in codescan_alerts:
   recent_instance_state = alert.most_recent_instance.state
   location = alert.most_recent_instance.location
   message_text = alert.most_recent_instance.message['text']
+  severity = convert_severity(str(rule_severity_level)).title()
+
+  if severity_prefix:
+    severity_label = f"{severity_prefix} {severity}"
+  else:
+    severity_label = severity
 
   # Construct the issue title and body
   issue_title = f"CodeQL Alert #{alert_id} - Security rule {rule_name} triggered"
@@ -115,10 +144,11 @@ for alert in codescan_alerts:
   else:
     # Create a new issue
     alert_url = f"https://github.com/{owner}/{repo_name}/security/code-scanning/{alert_id}"
+    print(f"Severity: {severity_label} Labels: {custom_labels}")
     repo.create_issue(
       title=issue_title,
       body=f"{issue_body}\n\n[CodeQL Alert Link]({alert_url})",
-      labels=["security", "code scanning", f"Priority: {str(rule_severity_level).title()}"]
+      labels=[severity_label] + custom_labels
     )
     scan_created_issues.append(alert_id)
 

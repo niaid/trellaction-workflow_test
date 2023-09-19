@@ -23,7 +23,7 @@ Your board ID is an alphanumeric set of characters in the URL of your board list
 6. Copy the API key and secret from this page
 7. On your local machine, ensure Python is installed
 8. Open a terminal and install the "py-trello" pip package 
-9. Run `export TRELLO_API_KEY=<your api key> && export TRELLO_API_SECRET=<your api secret> && python3 -m trello oauth`
+9. Run `export TRELLO_API_KEY=<your api key> && export TRELLO_API_SECRET=<your api secret> && export TRELLO_EXPIRATION=<desired expiration in days> && python3 -m trello oauth`
 10. Follow the link provided by the command in your web browser and click "Allow"
 11. Copy the PIN you receive
 12. Back in your terminal, type `y` in response to "Have you authorized me?"
