@@ -5,7 +5,7 @@ def conn_to_db():
   conn = psycopg2.connect(database = "tempdb", 
                           user = "myuser", 
                           host= 'test-db.aan0943.aws.amazon.com',
-                          password = "",
+                          password = "Test1234!",
                           port = 5432)
 
   cursor = conn.cursor()
