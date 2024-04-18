@@ -291,3 +291,6 @@ def delete_secret(secret):
         return e
     else:
         return f"The secret {secret} has been deleted. If it was a mistake you can recover it within {days_to_recover} days."
+
+
+
